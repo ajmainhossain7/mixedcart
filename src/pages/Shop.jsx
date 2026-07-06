@@ -25,6 +25,13 @@ const Shop = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [sortOption, setSortOption] = useState('Featured');
+    
+    // Advanced filters
+    const [showFilters, setShowFilters] = useState(false);
+    const [minPrice, setMinPrice] = useState('');
+    const [maxPrice, setMaxPrice] = useState('');
+    const [minRating, setMinRating] = useState('All');
+    const [inStockOnly, setInStockOnly] = useState(false);
 
     const categories = ['All', 'Apparel', 'Home Decor', 'Furniture', 'Wellness', 'Modern Utility'];
 
@@ -70,6 +77,26 @@ const Shop = () => {
             result = result.filter(product => product.category === selectedCategory);
         }
 
+        // Price Min filter
+        if (minPrice !== '') {
+            result = result.filter(product => product.price >= Number(minPrice));
+        }
+
+        // Price Max filter
+        if (maxPrice !== '') {
+            result = result.filter(product => product.price <= Number(maxPrice));
+        }
+
+        // Ratings filter
+        if (minRating !== 'All') {
+            result = result.filter(product => (product.rating || 0) >= Number(minRating));
+        }
+
+        // Stock availability filter
+        if (inStockOnly) {
+            result = result.filter(product => (product.stock || 0) > 0);
+        }
+
         // Sort filter
         if (sortOption === 'Price: Low to High') {
             result.sort((a, b) => a.price - b.price);
@@ -78,7 +105,7 @@ const Shop = () => {
         }
 
         setFilteredProducts(result);
-    }, [products, searchQuery, selectedCategory, sortOption]);
+    }, [products, searchQuery, selectedCategory, sortOption, minPrice, maxPrice, minRating, inStockOnly]);
 
     return (
         <div className="shop-page-container container section-padding">
@@ -103,20 +130,99 @@ const Shop = () => {
                     />
                 </div>
 
-                <div className="sort-wrapper">
-                    <label htmlFor="sort">Sort By</label>
-                    <select
-                        id="sort"
-                        value={sortOption}
-                        onChange={(e) => setSortOption(e.target.value)}
-                        className="form-input select-input sort-select"
+                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                    <button 
+                        onClick={() => setShowFilters(!showFilters)} 
+                        className={`btn-secondary filter-toggle-btn ${showFilters ? 'active' : ''}`}
+                        style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}
                     >
-                        <option value="Featured">Featured</option>
-                        <option value="Price: Low to High">Price: Low to High</option>
-                        <option value="Price: High to Low">Price: High to Low</option>
-                    </select>
+                        <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                        </svg>
+                        {showFilters ? 'Hide Filters' : 'Filters'}
+                    </button>
+
+                    <div className="sort-wrapper">
+                        <label htmlFor="sort">Sort By</label>
+                        <select
+                            id="sort"
+                            value={sortOption}
+                            onChange={(e) => setSortOption(e.target.value)}
+                            className="form-input select-input sort-select"
+                        >
+                            <option value="Featured">Featured</option>
+                            <option value="Price: Low to High">Price: Low to High</option>
+                            <option value="Price: High to Low">Price: High to Low</option>
+                        </select>
+                    </div>
                 </div>
             </div>
+
+            {showFilters && (
+                <div className="shop-filters-panel" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '24px', padding: '24px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', marginBottom: '32px' }}>
+                    <div>
+                        <span style={{ display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px', color: 'var(--text-secondary)' }}>Price Range</span>
+                        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                            <input 
+                                type="number" 
+                                placeholder="Min" 
+                                value={minPrice} 
+                                onChange={(e) => setMinPrice(e.target.value)} 
+                                style={{ width: '100%', padding: '8px 12px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '13px' }} 
+                            />
+                            <span style={{ color: 'var(--text-light)' }}>—</span>
+                            <input 
+                                type="number" 
+                                placeholder="Max" 
+                                value={maxPrice} 
+                                onChange={(e) => setMaxPrice(e.target.value)} 
+                                style={{ width: '100%', padding: '8px 12px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '13px' }} 
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <span style={{ display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px', color: 'var(--text-secondary)' }}>Minimum Rating</span>
+                        <select 
+                            value={minRating} 
+                            onChange={(e) => setMinRating(e.target.value)}
+                            style={{ width: '100%', padding: '8px 12px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '13px' }}
+                        >
+                            <option value="All">All Ratings</option>
+                            <option value="4">4★ & Above</option>
+                            <option value="3">3★ & Above</option>
+                            <option value="2">2★ & Above</option>
+                        </select>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', height: '100%', paddingTop: '20px' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '13px', color: 'var(--text-secondary)' }}>
+                            <input 
+                                type="checkbox" 
+                                checked={inStockOnly} 
+                                onChange={(e) => setInStockOnly(e.target.checked)} 
+                                style={{ width: '16px', height: '16px', border: '1px solid var(--border-color)', cursor: 'pointer' }}
+                            />
+                            In Stock Only
+                        </label>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', height: '100%', paddingTop: '20px', justifyContent: 'flex-end' }}>
+                        <button 
+                            onClick={() => {
+                                setMinPrice('');
+                                setMaxPrice('');
+                                setMinRating('All');
+                                setInStockOnly(false);
+                            }}
+                            className="btn-secondary"
+                            style={{ padding: '8px 16px', fontSize: '11px' }}
+                        >
+                            Clear Filters
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Category Tabs */}
             <div className="category-tabs">

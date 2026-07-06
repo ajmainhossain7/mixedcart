@@ -30,8 +30,71 @@ const CompanyDashboard = () => {
     });
     const [productImage, setProductImage] = useState(null);
     
+    // Seller orders state
+    const [orders, setOrders] = useState([]);
+    const [ordersLoading, setOrdersLoading] = useState(true);
+    const [analytics, setAnalytics] = useState(null);
+    
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
+
+    // Fetch seller orders when tab changes
+    useEffect(() => {
+        if (!user || user.role !== 'company' || activeTab !== 'orders') return;
+
+        const fetchSellerOrders = async () => {
+            setOrdersLoading(true);
+            try {
+                const res = await fetch('http://localhost:5000/api/orders/seller', {
+                    headers: { 'Authorization': `Bearer ${user.token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setOrders(data);
+                }
+            } catch (err) {
+                console.error('Error fetching seller orders:', err);
+            } finally {
+                setOrdersLoading(false);
+            }
+        };
+
+        fetchSellerOrders();
+    }, [user, activeTab]);
+
+    const handleUpdateItemStatus = async (orderId, productId, newStatus) => {
+        setMessage('');
+        try {
+            const res = await fetch(`http://localhost:5000/api/orders/seller/${orderId}/item/${productId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify({ status: newStatus })
+            });
+
+            if (res.ok) {
+                setOrders(orders.map(order => {
+                    if (order._id === orderId) {
+                        return {
+                            ...order,
+                            items: order.items.map(item => 
+                                item.product._id === productId ? { ...item, status: newStatus } : item
+                            )
+                        };
+                    }
+                    return order;
+                }));
+                setMessage('Item fulfillment status updated successfully.');
+            } else {
+                const err = await res.json();
+                setMessage(err.message || 'Failed to update item status.');
+            }
+        } catch (err) {
+            setMessage('Error connecting to server.');
+        }
+    };
 
     useEffect(() => {
         if (!user || user.role !== 'company') return;
@@ -65,6 +128,17 @@ const CompanyDashboard = () => {
                 if (productsRes.ok) {
                     const productsData = await productsRes.json();
                     setProducts(productsData);
+                }
+
+                // Fetch seller analytics
+                const analyticsRes = await fetch('http://localhost:5000/api/analytics/seller', {
+                    headers: {
+                        'Authorization': `Bearer ${user.token}`
+                    }
+                });
+                if (analyticsRes.ok) {
+                    const analyticsData = await analyticsRes.json();
+                    setAnalytics(analyticsData);
                 }
             } catch (error) {
                 console.error('Error fetching company dashboard details:', error);
@@ -183,6 +257,12 @@ const CompanyDashboard = () => {
                     My Products
                 </button>
                 <button 
+                    className={`dashboard-tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('orders')}
+                >
+                    Fulfillment Orders
+                </button>
+                <button 
                     className={`dashboard-tab-btn ${activeTab === 'profile' ? 'active' : ''}`}
                     onClick={() => setActiveTab('profile')}
                 >
@@ -192,7 +272,91 @@ const CompanyDashboard = () => {
 
             {message && <div style={{ marginBottom: '24px', padding: '16px', border: '1px solid var(--border-color)', fontSize: '14px' }}>{message}</div>}
 
-            {activeTab === 'products' ? (
+            {/* Seller Analytics Section */}
+            {analytics && (
+                <div style={{ marginBottom: '40px' }}>
+                    <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px', marginBottom: '32px' }}>
+                        <div className="stat-card" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', padding: '24px' }}>
+                            <span className="stat-title" style={{ display: 'block', fontSize: '10px', color: 'var(--text-light)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>Total Earnings</span>
+                            <div className="stat-number" style={{ fontFamily: 'var(--font-serif)', fontSize: '32px', color: '#2ecc71', fontWeight: '500' }}>
+                                ${analytics.totalRevenue.toFixed(2)}
+                            </div>
+                        </div>
+                        <div className="stat-card" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', padding: '24px' }}>
+                            <span className="stat-title" style={{ display: 'block', fontSize: '10px', color: 'var(--text-light)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>Fulfillment Orders</span>
+                            <div className="stat-number" style={{ fontFamily: 'var(--font-serif)', fontSize: '32px', color: 'var(--text-primary)', fontWeight: '500' }}>
+                                {analytics.totalOrders}
+                            </div>
+                        </div>
+                        <div className="stat-card" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', padding: '24px' }}>
+                            <span className="stat-title" style={{ display: 'block', fontSize: '10px', color: 'var(--text-light)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>Items Sold</span>
+                            <div className="stat-number" style={{ fontFamily: 'var(--font-serif)', fontSize: '32px', color: 'var(--text-primary)', fontWeight: '500' }}>
+                                {analytics.totalItemsSold}
+                            </div>
+                        </div>
+                        <div className="stat-card" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', padding: '24px' }}>
+                            <span className="stat-title" style={{ display: 'block', fontSize: '10px', color: 'var(--text-light)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>Active Catalog</span>
+                            <div className="stat-number" style={{ fontFamily: 'var(--font-serif)', fontSize: '32px', color: 'var(--text-primary)', fontWeight: '500' }}>
+                                {analytics.totalProducts} products
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* SVG Chart */}
+                    <div style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', padding: '32px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                        <h3 className="serif-heading" style={{ fontSize: '18px', color: 'var(--text-primary)' }}>Monthly Revenue Summary</h3>
+                        
+                        <div style={{ position: 'relative', width: '100%', height: '220px' }}>
+                            <svg viewBox="0 0 600 200" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+                                {/* Grid lines */}
+                                <line x1="50" y1="30" x2="550" y2="30" stroke="var(--border-color)" strokeDasharray="4 4" />
+                                <line x1="50" y1="80" x2="550" y2="80" stroke="var(--border-color)" strokeDasharray="4 4" />
+                                <line x1="50" y1="130" x2="550" y2="130" stroke="var(--border-color)" strokeDasharray="4 4" />
+                                <line x1="50" y1="170" x2="550" y2="170" stroke="var(--border-color)" />
+
+                                {/* Render monthly bars */}
+                                {analytics.salesData.map((data, idx) => {
+                                    const maxVal = Math.max(100, ...analytics.salesData.map(s => s.revenue));
+                                    const barHeight = (data.revenue / maxVal) * 120;
+                                    const x = 80 + idx * 80;
+                                    const y = 170 - barHeight;
+
+                                    return (
+                                        <g key={idx}>
+                                            <rect 
+                                                x={x} 
+                                                y={y} 
+                                                width="40" 
+                                                height={barHeight} 
+                                                fill="var(--text-primary)" 
+                                                style={{ transition: 'all 0.5s ease' }} 
+                                            />
+                                            <text 
+                                                x={x + 20} 
+                                                y={y - 8} 
+                                                textAnchor="middle" 
+                                                style={{ fontSize: '10px', fill: 'var(--text-primary)', fontWeight: '600' }}
+                                            >
+                                                ${data.revenue.toFixed(0)}
+                                            </text>
+                                            <text 
+                                                x={x + 20} 
+                                                y="188" 
+                                                textAnchor="middle" 
+                                                style={{ fontSize: '11px', fill: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                                            >
+                                                {data.month}
+                                            </text>
+                                        </g>
+                                    );
+                                })}
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {activeTab === 'products' && (
                 <div className="dashboard-content-section">
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
                         <h2 className="serif-heading" style={{ fontSize: '22px' }}>Inventory Items</h2>
@@ -306,7 +470,81 @@ const CompanyDashboard = () => {
                         )}
                     </div>
                 </div>
-            ) : (
+            )}
+
+            {activeTab === 'orders' && (
+                <div className="dashboard-content-section">
+                    <h2 className="serif-heading" style={{ fontSize: '22px', marginBottom: '24px' }}>Incoming Orders</h2>
+                    
+                    {ordersLoading ? (
+                        <p>Loading orders...</p>
+                    ) : orders.length === 0 ? (
+                        <p style={{ color: 'var(--text-light)', fontStyle: 'italic' }}>No orders contain your products yet.</p>
+                    ) : (
+                        <div className="orders-list">
+                            {orders.map((order) => (
+                                <div key={order._id} className="order-history-card" style={{ marginBottom: '24px' }}>
+                                    <div className="order-card-header" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', padding: '20px 24px', backgroundColor: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)' }}>
+                                        <div>
+                                            <span style={{ display: 'block', fontSize: '10px', color: 'var(--text-light)', textTransform: 'uppercase', marginBottom: '4px' }}>Order Number</span>
+                                            <span style={{ fontSize: '13px', fontFamily: 'monospace' }}>{order._id}</span>
+                                        </div>
+                                        <div>
+                                            <span style={{ display: 'block', fontSize: '10px', color: 'var(--text-light)', textTransform: 'uppercase', marginBottom: '4px' }}>Ship To</span>
+                                            <span style={{ fontSize: '13px', fontWeight: '600' }}>{order.address.fullName}</span>
+                                            <span style={{ display: 'block', fontSize: '11px', color: 'var(--text-secondary)' }}>{order.address.city}, {order.address.country}</span>
+                                        </div>
+                                        <div>
+                                            <span style={{ display: 'block', fontSize: '10px', color: 'var(--text-light)', textTransform: 'uppercase', marginBottom: '4px' }}>Date Placed</span>
+                                            <span style={{ fontSize: '13px' }}>{new Date(order.createdAt).toLocaleDateString()}</span>
+                                        </div>
+                                        <div>
+                                            <span style={{ display: 'block', fontSize: '10px', color: 'var(--text-light)', textTransform: 'uppercase', marginBottom: '4px' }}>Your Earnings</span>
+                                            <span style={{ fontSize: '14px', fontFamily: 'var(--font-serif)', fontWeight: '600' }}>${order.sellerTotal.toFixed(2)}</span>
+                                        </div>
+                                    </div>
+                                    <div style={{ padding: '0 24px' }}>
+                                        {order.items.map((item) => (
+                                            <div key={item._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderBottom: '1px solid var(--border-color)' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                                    <img src={item.product.imageUrl} alt={item.product.name} style={{ width: '40px', height: '50px', objectFit: 'cover', border: '1px solid var(--border-color)' }} />
+                                                    <div>
+                                                        <span style={{ display: 'block', fontWeight: '500' }}>{item.product.name}</span>
+                                                        <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Qty: {item.qty} × ${item.price}</span>
+                                                    </div>
+                                                </div>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                                    <span className={`status-badge ${item.status.toLowerCase()}`} style={{ fontSize: '10px' }}>
+                                                        {item.status}
+                                                    </span>
+                                                    <select
+                                                        value={item.status}
+                                                        onChange={(e) => handleUpdateItemStatus(order._id, item.product._id, e.target.value)}
+                                                        style={{ 
+                                                            padding: '6px 12px', 
+                                                            fontSize: '12px', 
+                                                            border: '1px solid var(--border-color)', 
+                                                            backgroundColor: 'var(--bg-primary)', 
+                                                            color: 'var(--text-primary)' 
+                                                        }}
+                                                    >
+                                                        <option value="Pending">Pending</option>
+                                                        <option value="Processing">Processing</option>
+                                                        <option value="Shipped">Shipped</option>
+                                                        <option value="Delivered">Delivered</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {activeTab === 'profile' && (
                 <div className="dashboard-content-section">
                     <h2 className="serif-heading" style={{ fontSize: '22px', marginBottom: '24px' }}>Edit Company Details</h2>
                     
