@@ -133,3 +133,150 @@
     gap: 40px;
   }
 }
+
+/* Reviews Section */
+.product-reviews-section {
+  margin-top: 80px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 60px;
+}
+
+.reviews-section-title {
+  font-size: 28px;
+  margin-bottom: 40px;
+  color: var(--text-primary);
+}
+
+.reviews-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 60px;
+  align-items: flex-start;
+}
+
+.reviews-list-column {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.review-card {
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.review-card:last-child {
+  border-bottom: none;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.review-author {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.review-date {
+  color: var(--text-light);
+}
+
+.review-rating {
+  margin-bottom: 12px;
+  color: var(--text-light);
+}
+
+.star {
+  font-size: 16px;
+  margin-right: 2px;
+}
+
+.star.filled {
+  color: #F39C12; /* Golden star */
+}
+
+.review-comment {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.no-reviews-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.review-form-column {
+  padding: 32px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  transition: background-color var(--transition-speed), border-color var(--transition-speed);
+}
+
+.review-form-title {
+  font-size: 20px;
+  margin-bottom: 24px;
+  color: var(--text-primary);
+}
+
+.review-error-message {
+  color: #db4455;
+  background-color: rgba(219, 68, 85, 0.1);
+  padding: 12px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  border-left: 3px solid #db4455;
+}
+
+.review-success-message {
+  color: #28a745;
+  background-color: rgba(40, 167, 69, 0.1);
+  padding: 12px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  border-left: 3px solid #28a745;
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.textarea-input {
+  resize: vertical;
+  min-height: 100px;
+  border-radius: 0;
+}
+
+.review-submit-btn {
+  width: 100%;
+}
+
+.review-login-prompt {
+  padding: 32px;
+  background-color: var(--bg-secondary);
+  border: 1px dashed var(--border-color);
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.review-login-link {
+  color: var(--text-primary);
+  font-weight: 600;
+  border-bottom: 1px solid var(--text-primary);
+  padding-bottom: 2px;
+}
+
+@media (max-width: 991px) {
+  .reviews-layout {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}

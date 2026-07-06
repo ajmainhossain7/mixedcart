@@ -54,6 +54,17 @@
   border-color: var(--text-primary);
 }
 
+.product-wishlist-btn.active {
+  background-color: #db4455;
+  color: #FFFFFF;
+  border-color: #db4455;
+}
+
+.product-wishlist-btn.active:hover {
+  background-color: #c0392b;
+  border-color: #c0392b;
+}
+
 .product-info {
   padding: 24px;
   display: flex;

@@ -1,12 +1,30 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import "../styles/product.css";
 
 const ProductCard = ({ product }) => {
+    const { user, wishlist, toggleWishlist } = useContext(AuthContext);
+
+    const isWishlisted = wishlist.includes(product._id);
+
+    const handleWishlistClick = (e) => {
+        e.preventDefault();
+        if (!user) {
+            alert('Please login to save items to your wishlist.');
+            return;
+        }
+        toggleWishlist(product._id);
+    };
+
     return (
         <div className="product-card">
-            <button className="product-wishlist-btn" aria-label="Add to wishlist">
-                <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <button 
+                onClick={handleWishlistClick}
+                className={`product-wishlist-btn ${isWishlisted ? 'active' : ''}`} 
+                aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+            >
+                <svg width="15" height="15" fill={isWishlisted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
             </button>

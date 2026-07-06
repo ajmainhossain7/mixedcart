@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
+import { AuthContext } from '../context/AuthContext';
 import '../styles/productDetails.css';
 
 // Mock catalog for lookup if DB does not have it
@@ -18,11 +19,19 @@ const mockProducts = [
 const ProductDetails = () => {
     const { id } = useParams();
     const { addToCart } = useContext(CartContext);
+    const { user } = useContext(AuthContext);
     
     const [product, setProduct] = useState(null);
     const [qty, setQty] = useState(1);
     const [loading, setLoading] = useState(true);
     const [added, setAdded] = useState(false);
+
+    // Review Form States
+    const [rating, setRating] = useState(5);
+    const [comment, setComment] = useState('');
+    const [submitting, setSubmitting] = useState(false);
+    const [reviewError, setReviewError] = useState('');
+    const [reviewSuccess, setReviewSuccess] = useState('');
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -56,6 +65,38 @@ const ProductDetails = () => {
         addToCart(product, qty);
         setAdded(true);
         setTimeout(() => setAdded(false), 2000);
+    };
+
+    const handleReviewSubmit = async (e) => {
+        e.preventDefault();
+        setSubmitting(true);
+        setReviewError('');
+        setReviewSuccess('');
+
+        try {
+            const res = await fetch(`http://localhost:5000/api/products/${id}/reviews`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify({ rating, comment })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                setReviewSuccess('Review submitted successfully!');
+                setProduct(data.product);
+                setComment('');
+                setRating(5);
+            } else {
+                setReviewError(data.message || 'Failed to submit review.');
+            }
+        } catch (err) {
+            setReviewError('Could not connect to server.');
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     if (loading) return <div className="product-details-loading container section-padding">Loading details...</div>;
@@ -99,6 +140,84 @@ const ProductDetails = () => {
                         <p>✓ Order ships in 1-3 business days.</p>
                         <p>✓ Free domestic shipping on orders over $150.</p>
                     </div>
+                </div>
+            </div>
+
+            {/* Reviews Section */}
+            <div className="product-reviews-section">
+                <h2 className="serif-heading reviews-section-title">Customer Reviews ({product.reviews ? product.reviews.length : 0})</h2>
+                
+                <div className="reviews-layout">
+                    {/* Reviews List */}
+                    <div className="reviews-list-column">
+                        {product.reviews && product.reviews.length > 0 ? (
+                            product.reviews.map((review) => (
+                                <div key={review._id} className="review-card">
+                                    <div className="review-header">
+                                        <span className="review-author">{review.name}</span>
+                                        <span className="review-date">{new Date(review.createdAt).toLocaleDateString()}</span>
+                                    </div>
+                                    <div className="review-rating">
+                                        {Array.from({ length: 5 }).map((_, i) => (
+                                            <span key={i} className={`star ${i < review.rating ? 'filled' : ''}`}>★</span>
+                                        ))}
+                                    </div>
+                                    <p className="review-comment">{review.comment}</p>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="no-reviews-text">No reviews yet for this product. Be the first to leave a review!</p>
+                        )}
+                    </div>
+
+                    {/* Review Form */}
+                    {user ? (
+                        <div className="review-form-column">
+                            <h3 className="serif-heading review-form-title">Write a Review</h3>
+                            {reviewError && <div className="review-error-message">{reviewError}</div>}
+                            {reviewSuccess && <div className="review-success-message">{reviewSuccess}</div>}
+                            
+                            <form onSubmit={handleReviewSubmit} className="review-form">
+                                <div className="form-group">
+                                    <label htmlFor="rating">Rating</label>
+                                    <select
+                                        id="rating"
+                                        value={rating}
+                                        onChange={(e) => setRating(Number(e.target.value))}
+                                        className="form-input select-input"
+                                        required
+                                    >
+                                        <option value="5">5 Stars — Excellent</option>
+                                        <option value="4">4 Stars — Good</option>
+                                        <option value="3">3 Stars — Average</option>
+                                        <option value="2">2 Stars — Poor</option>
+                                        <option value="1">1 Star — Very Poor</option>
+                                    </select>
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="comment">Comment</label>
+                                    <textarea
+                                        id="comment"
+                                        rows="4"
+                                        value={comment}
+                                        onChange={(e) => setComment(e.target.value)}
+                                        className="form-input textarea-input"
+                                        placeholder="Share your thoughts about this product..."
+                                        required
+                                    ></textarea>
+                                </div>
+
+                                <button type="submit" className="btn-primary review-submit-btn" disabled={submitting}>
+                                    {submitting ? 'Submitting...' : 'Submit Review'}
+                                </button>
+                            </form>
+                        </div>
+                    ) : (
+                        <div className="review-login-prompt">
+                            <p>Please <Link to="/login" className="review-login-link">login</Link> to write a review.</p>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

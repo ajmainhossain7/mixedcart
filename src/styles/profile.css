@@ -70,8 +70,49 @@
   margin-top: 10px;
 }
 
-/* Orders History Section */
-.profile-orders-section {
+/* Profile Main Tabs */
+.profile-tabs {
+  display: flex;
+  gap: 30px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 30px;
+}
+
+.profile-tab-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-light);
+  padding: 12px 0 16px 0;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.profile-tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.profile-tab-btn.active {
+  color: var(--text-primary);
+}
+
+.profile-tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--text-primary);
+}
+
+/* Orders History & Wishlist Section */
+.profile-orders-section, .profile-wishlist-section {
   display: flex;
   flex-direction: column;
   gap: 30px;
