@@ -52,10 +52,21 @@
   text-transform: uppercase;
   color: var(--text-secondary);
   transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .navbar-link:hover, .navbar-link.active {
   color: var(--text-primary);
+}
+
+.navbar-icon {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.2s ease;
+}
+
+.navbar-link:hover .navbar-icon {
+  transform: translateY(-1px) scale(1.05);
 }
 
 .navbar-link-btn {

@@ -20,9 +20,6 @@ const Navbar = () => {
                     <li className="navbar-item">
                         <NavLink to="/shop" className={({ isActive }) => isActive ? "navbar-link active" : "navbar-link"}>Shop</NavLink>
                     </li>
-                    <li className="navbar-item">
-                        <NavLink to="/cart" className={({ isActive }) => isActive ? "navbar-link active" : "navbar-link"}>Cart</NavLink>
-                    </li>
 
                     {user && user.role === 'admin' && (
                         <li className="navbar-item">
@@ -35,11 +32,27 @@ const Navbar = () => {
                             <NavLink to="/company/dashboard" className={({ isActive }) => isActive ? "navbar-link active" : "navbar-link"}>Seller Panel</NavLink>
                         </li>
                     )}
+                    {/* Cart Icon (Left side of User Icon) */}
+                    <li className="navbar-item">
+                        <NavLink to="/cart" className={({ isActive }) => isActive ? "navbar-link active" : "navbar-link"} aria-label="Cart">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="navbar-icon">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                            </svg>
+                        </NavLink>
+                    </li>
 
+                    {/* User Icon */}
                     {user ? (
                         <>
                             <li className="navbar-item">
-                                <NavLink to="/profile" className={({ isActive }) => isActive ? "navbar-link active" : "navbar-link"}>Profile</NavLink>
+                                <NavLink to="/profile" className={({ isActive }) => isActive ? "navbar-link active" : "navbar-link"} aria-label="Profile">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="navbar-icon">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                </NavLink>
                             </li>
                             <li className="navbar-item">
                                 <button onClick={logout} className="navbar-link-btn">Logout</button>
@@ -48,7 +61,12 @@ const Navbar = () => {
                     ) : (
                         <>
                             <li className="navbar-item">
-                                <NavLink to="/login" className={({ isActive }) => isActive ? "navbar-link active" : "navbar-link"}>Login</NavLink>
+                                <NavLink to="/login" className={({ isActive }) => isActive ? "navbar-link active" : "navbar-link"} aria-label="Login">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="navbar-icon">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                </NavLink>
                             </li>
                             <li className="navbar-item">
                                 <NavLink to="/register" className={({ isActive }) => isActive ? "navbar-link active" : "navbar-link"}>Register</NavLink>
