@@ -7,7 +7,6 @@ import '../styles/home.css';
 const Home = () => {
     const { theme } = useContext(ThemeContext);
     const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -19,8 +18,6 @@ const Home = () => {
                 }
             } catch (err) {
                 console.error("Failed to fetch products from backend:", err);
-            } finally {
-                setLoading(false);
             }
         };
         fetchProducts();
