@@ -9,8 +9,8 @@ export const AuthProvider = ({ children }) => {
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
     }
-    const logout = (userData) => {
-        setUser(userData);
+    const logout = () => {
+        setUser(null);
         localStorage.removeItem('user');
     }
 
