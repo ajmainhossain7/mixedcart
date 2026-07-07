@@ -36,6 +36,20 @@ const ProductCard = ({ product }) => {
                 <Link to={`/product/${product._id}`}>
                     <h3 className="product-name">{product.name}</h3>
                 </Link>
+                
+                <div className="product-rating-badge" style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px', height: '16px' }}>
+                    <div style={{ color: '#F39C12', fontSize: '12px' }}>
+                        {Array.from({ length: 5 }).map((_, i) => (
+                            <span key={i}>{i < Math.round(product.rating || 0) ? '★' : '☆'}</span>
+                        ))}
+                    </div>
+                    {product.numReviews > 0 ? (
+                        <span style={{ fontSize: '11px', color: 'var(--text-light)' }}>({product.numReviews})</span>
+                    ) : (
+                        <span style={{ fontSize: '11px', color: 'var(--text-light)', fontStyle: 'italic' }}>No reviews</span>
+                    )}
+                </div>
+
                 <div className="product-price-btn-wrapper">
                     <span className="product-price">${product.price}</span>
                     <Link to={`/product/${product._id}`} className="product-action-link">

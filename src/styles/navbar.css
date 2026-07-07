@@ -123,3 +123,239 @@
     letter-spacing: 0.05em;
   }
 }
+
+/* Navbar Cart Badge */
+.navbar-cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background-color: #db4455;
+  color: #FFFFFF;
+  font-size: 9px;
+  font-weight: 700;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--bg-primary);
+}
+
+/* Cart Drawer Backdrop */
+.cart-drawer-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.cart-drawer-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Cart Drawer Panel */
+.cart-drawer-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 420px;
+  max-width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-primary);
+  border-left: 1px solid var(--border-color);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.05);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color var(--transition-speed);
+}
+
+.cart-drawer-panel.open {
+  transform: translateX(0);
+}
+
+.cart-drawer-header {
+  padding: 24px 30px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.drawer-title {
+  font-size: 20px;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.drawer-close-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 4px;
+}
+
+/* Items List */
+.cart-drawer-items-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cart-drawer-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.cart-drawer-item-img {
+  width: 70px;
+  height: 88px;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+}
+
+.cart-drawer-item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cart-drawer-item-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.cart-drawer-item-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.cart-drawer-item-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.drawer-qty-selector {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-color);
+}
+
+.drawer-qty-btn {
+  background: none;
+  border: none;
+  padding: 6px 10px;
+  font-size: 10px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.drawer-qty-val {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0 8px;
+  color: var(--text-primary);
+}
+
+.drawer-remove-link {
+  background: none;
+  border: none;
+  font-size: 11px;
+  color: var(--text-light);
+  border-bottom: 1px solid var(--text-light);
+  cursor: pointer;
+  padding: 0;
+}
+
+.drawer-remove-link:hover {
+  color: #db4455;
+  border-color: #db4455;
+}
+
+/* Empty State */
+.cart-drawer-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  gap: 16px;
+}
+
+.drawer-empty-icon {
+  color: var(--text-light);
+}
+
+.empty-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.continue-btn {
+  padding: 12px 24px;
+  font-size: 11px;
+}
+
+/* Drawer Footer */
+.cart-drawer-footer {
+  padding: 24px 30px 40px 30px;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: background-color var(--transition-speed);
+}
+
+.drawer-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.drawer-total-price {
+  font-family: var(--font-serif);
+  font-size: 18px;
+}
+
+.drawer-disclaimer {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.checkout-btn-drawer {
+  width: 100%;
+  padding: 15px;
+}
+
+.view-bag-btn-drawer {
+  width: 100%;
+  padding: 15px;
+}

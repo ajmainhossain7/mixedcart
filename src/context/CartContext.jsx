@@ -7,6 +7,7 @@ export const CartProvider = ({ children }) => {
         const localData = localStorage.getItem('cartItems');
         return localData ? JSON.parse(localData) : [];
     });
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
     useEffect(() => {
         localStorage.setItem('cartItems', JSON.stringify(cartItems));
@@ -22,6 +23,7 @@ export const CartProvider = ({ children }) => {
             }
             return [...prevItems, { ...product, qty: quantity }];
         });
+        setIsDrawerOpen(true);
     };
 
     const removeFromCart = (id) => {
@@ -55,6 +57,8 @@ export const CartProvider = ({ children }) => {
                 clearCart,
                 cartCount,
                 cartTotal,
+                isDrawerOpen,
+                setIsDrawerOpen,
             }}
         >
             {children}
