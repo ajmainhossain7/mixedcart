@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import ProductDetails from "./pages/ProductDetails";
+import ChatWidget from "./components/ChatWidget";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/product/:id" element={<ProductDetails />} />
       </Routes>
+      <ChatWidget />
       <Footer />
     </Router>
   );

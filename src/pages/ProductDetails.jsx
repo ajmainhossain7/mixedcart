@@ -136,6 +136,32 @@ const ProductDetails = () => {
                         </button>
                     </div>
 
+                    {(!user || (product.seller && user._id.toString() !== product.seller.toString())) && (
+                        <button 
+                            onClick={() => {
+                                if (!product.seller) return;
+                                window.dispatchEvent(new CustomEvent('open_chat_with_seller', { 
+                                    detail: { sellerId: product.seller } 
+                                }));
+                            }} 
+                            className="btn-secondary" 
+                            style={{ 
+                                marginTop: '16px', 
+                                width: '100%', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                gap: '8px',
+                                padding: '12px'
+                            }}
+                        >
+                            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 8.511c.084.29.128.597.128.916 0 3.737-3.722 6.75-8.318 6.75-1.077 0-2.119-.166-3.084-.469l-3.327 2.018c-.43.26-.99-.071-.99-.575v-1.748c-1.39-1.282-2.288-3.003-2.288-4.912 0-3.737 3.722-6.75 8.318-6.75 4.596 0 8.318 3.013 8.318 6.75zm-8.25-.975v.008H12v-.008zm-3 0v.008h.008v-.008zm6 0v.008h.008v-.008z" />
+                            </svg>
+                            Chat with Seller
+                        </button>
+                    )}
+
                     <div className="details-shipping-info">
                         <p>✓ Order ships in 1-3 business days.</p>
                         <p>✓ Free domestic shipping on orders over $150.</p>

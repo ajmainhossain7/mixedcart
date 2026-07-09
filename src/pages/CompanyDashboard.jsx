@@ -1,6 +1,201 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { io } from 'socket.io-client';
 import '../styles/dashboard.css';
+import '../styles/chat.css';
+
+const SellerChat = ({ user }) => {
+    const [conversations, setConversations] = useState([]);
+    const [activeConversation, setActiveConversation] = useState(null);
+    const [messages, setMessages] = useState([]);
+    const [newMessageText, setNewMessageText] = useState('');
+    const socketRef = useRef(null);
+    const messagesEndRef = useRef(null);
+
+    useEffect(() => {
+        if (!user) return;
+        socketRef.current = io('http://localhost:5000');
+
+        socketRef.current.on('connect', () => {
+            console.log('Seller chat socket connected');
+        });
+
+        socketRef.current.on('receive_message', (message) => {
+            setMessages((prev) => {
+                if (prev.some(m => m._id === message._id)) return prev;
+                if (activeConversation && message.conversation === activeConversation._id) {
+                    return [...prev, message];
+                }
+                return prev;
+            });
+
+            // Update list
+            setConversations((prevConvs) => {
+                return prevConvs.map(conv => {
+                    if (conv._id === message.conversation) {
+                        return {
+                            ...conv,
+                            lastMessage: message.text,
+                            lastMessageAt: message.createdAt
+                        };
+                    }
+                    return conv;
+                }).sort((a, b) => new Date(b.lastMessageAt) - new Date(a.lastMessageAt));
+            });
+        });
+
+        fetchConversations();
+
+        return () => {
+            if (socketRef.current) {
+                socketRef.current.disconnect();
+            }
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user, activeConversation]);
+
+    useEffect(() => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [messages]);
+
+    const fetchConversations = async () => {
+        try {
+            const res = await fetch('http://localhost:5000/api/chat/conversations', {
+                headers: { 'Authorization': `Bearer ${user.token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setConversations(data);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const fetchMessages = async (convId) => {
+        try {
+            const res = await fetch(`http://localhost:5000/api/chat/messages/${convId}`, {
+                headers: { 'Authorization': `Bearer ${user.token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setMessages(data);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleSelectConversation = (conv) => {
+        setActiveConversation(conv);
+        fetchMessages(conv._id);
+        if (socketRef.current) {
+            socketRef.current.emit('join_room', conv._id);
+        }
+    };
+
+    const handleSendMessage = (e) => {
+        e.preventDefault();
+        if (!newMessageText.trim() || !activeConversation || !socketRef.current) return;
+
+        socketRef.current.emit('send_message', {
+            conversationId: activeConversation._id,
+            senderId: user._id,
+            text: newMessageText
+        });
+        setNewMessageText('');
+    };
+
+    return (
+        <div className="seller-chat-layout">
+            {/* Sidebar */}
+            <div className="chat-dashboard-sidebar">
+                <div className="chat-dashboard-sidebar-header">
+                    <h3 className="chat-dashboard-sidebar-title">Customer Chats</h3>
+                </div>
+                <div className="chat-dashboard-list">
+                    {conversations.length === 0 ? (
+                        <p style={{ padding: '20px', color: 'var(--text-light)', fontSize: '13px', fontStyle: 'italic' }}>
+                            No active customer chats yet.
+                        </p>
+                    ) : (
+                        conversations.map(conv => (
+                            <div 
+                                key={conv._id} 
+                                className={`chat-dashboard-item ${activeConversation?._id === conv._id ? 'active' : ''}`}
+                                onClick={() => handleSelectConversation(conv)}
+                            >
+                                <div className="chat-dashboard-avatar">
+                                    {conv.customer.name.charAt(0).toUpperCase()}
+                                </div>
+                                <div className="chat-dashboard-info">
+                                    <span className="chat-dashboard-name">{conv.customer.name}</span>
+                                    <span className="chat-dashboard-msg">{conv.lastMessage || 'No messages yet'}</span>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+            </div>
+
+            {/* Chat Area */}
+            <div className="chat-dashboard-main">
+                {activeConversation ? (
+                    <>
+                        <div className="chat-dashboard-header">
+                            <div className="chat-dashboard-user-info">
+                                <div className="chat-dashboard-avatar">
+                                    {activeConversation.customer.name.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <h4 style={{ fontSize: '14.5px', fontWeight: '600' }}>{activeConversation.customer.name}</h4>
+                                    <span style={{ fontSize: '11px', color: '#2ecc71' }}>● Active</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="chat-dashboard-messages">
+                            {messages.map(msg => (
+                                <div key={msg._id} className={`chat-message-item ${msg.sender === user._id ? 'sent' : 'received'}`}>
+                                    {msg.text}
+                                    <span className="chat-message-timestamp">
+                                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                </div>
+                            ))}
+                            <div ref={messagesEndRef} />
+                        </div>
+
+                        <form onSubmit={handleSendMessage} className="chat-input-bar">
+                            <input 
+                                type="text"
+                                className="chat-input-field"
+                                placeholder="Type a response..."
+                                value={newMessageText}
+                                onChange={(e) => setNewMessageText(e.target.value)}
+                            />
+                            <button type="submit" className="chat-send-btn" disabled={!newMessageText.trim()}>
+                                <svg fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                                </svg>
+                            </button>
+                        </form>
+                    </>
+                ) : (
+                    <div className="chat-dashboard-empty">
+                        <svg width="48" height="48" fill="none" stroke="currentColor" strokeWidth="1.2" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+                        </svg>
+                        <h3 className="chat-dashboard-empty-title">Customer Messages</h3>
+                        <p style={{ fontSize: '13px', color: 'var(--text-light)' }}>Select a customer from the sidebar to view their messages.</p>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
 
 const CompanyDashboard = () => {
     const { user } = useContext(AuthContext);
@@ -267,6 +462,12 @@ const CompanyDashboard = () => {
                     onClick={() => setActiveTab('profile')}
                 >
                     Company Profile
+                </button>
+                <button 
+                    className={`dashboard-tab-btn ${activeTab === 'chats' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('chats')}
+                >
+                    Customer Chats
                 </button>
             </div>
 
@@ -632,6 +833,12 @@ const CompanyDashboard = () => {
 
                         <button type="submit" className="btn-primary" style={{ marginTop: '16px' }}>Save Changes</button>
                     </form>
+                </div>
+            )}
+
+            {activeTab === 'chats' && (
+                <div className="dashboard-content-section">
+                    <SellerChat user={user} />
                 </div>
             )}
         </div>
