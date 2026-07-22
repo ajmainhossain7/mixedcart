@@ -13,13 +13,13 @@ const Footer = () => {
                             Meticulously crafted essentials for the modern home and body. Curated with endurance and minimalism in mind.
                         </p>
                         <div className="footer-socials">
-                            <a href="#" className="footer-social-icon" aria-label="Instagram">
+                            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="footer-social-icon" aria-label="Instagram">
                                 IG
                             </a>
-                            <a href="#" className="footer-social-icon" aria-label="Pinterest">
+                            <a href="https://pinterest.com" target="_blank" rel="noopener noreferrer" className="footer-social-icon" aria-label="Pinterest">
                                 PT
                             </a>
-                            <a href="#" className="footer-social-icon" aria-label="Facebook">
+                            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="footer-social-icon" aria-label="Facebook">
                                 FB
                             </a>
                         </div>
@@ -38,10 +38,10 @@ const Footer = () => {
                     <div className="footer-col">
                         <h4 className="footer-heading">Information</h4>
                         <ul className="footer-links">
-                            <li><a href="#" className="footer-link">Our Story</a></li>
-                            <li><a href="#" className="footer-link">Sustainability</a></li>
-                            <li><a href="#" className="footer-link">Shipping & Returns</a></li>
-                            <li><a href="#" className="footer-link">Contact</a></li>
+                            <li><Link to="/" className="footer-link">Our Story</Link></li>
+                            <li><Link to="/" className="footer-link">Sustainability</Link></li>
+                            <li><Link to="/" className="footer-link">Shipping & Returns</Link></li>
+                            <li><Link to="/" className="footer-link">Contact</Link></li>
                         </ul>
                     </div>
 
@@ -65,8 +65,8 @@ const Footer = () => {
                 <div className="footer-bottom">
                     <p>&copy; {new Date().getFullYear()} LIFESTYLE. All rights reserved.</p>
                     <div className="footer-bottom-links">
-                        <a href="#" className="footer-link">Privacy Policy</a>
-                        <a href="#" className="footer-link">Terms of Service</a>
+                        <Link to="/" className="footer-link">Privacy Policy</Link>
+                        <Link to="/" className="footer-link">Terms of Service</Link>
                     </div>
                 </div>
             </div>
