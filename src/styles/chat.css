@@ -3,13 +3,13 @@
     position: fixed;
     bottom: 30px;
     right: 30px;
-    z-index: 1000;
+    z-index: 9999;
     font-family: var(--font-sans);
 }
 
 .chat-widget-toggle-btn {
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
     background-color: var(--button-bg);
     color: var(--button-text);
@@ -17,18 +17,22 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
     cursor: pointer;
-    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s ease;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .chat-widget-toggle-btn:hover {
-    transform: scale(1.08);
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
 }
 
 .chat-widget-toggle-btn svg {
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
 }
 
 /* Chat Window Box */
@@ -37,12 +41,13 @@
     height: 480px;
     background-color: var(--bg-primary);
     border: 1px solid var(--border-color);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     position: absolute;
-    bottom: 80px;
+    bottom: 76px;
     right: 0;
     transform: translateY(0);
     opacity: 1;

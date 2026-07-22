@@ -142,6 +142,19 @@
   border: 1.5px solid var(--bg-primary);
 }
 
+.navbar-icon-btn {
+  color: var(--text-secondary);
+  transition: color 0.2s ease, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar-icon-btn:hover {
+  color: var(--text-primary);
+}
+
+.navbar-icon-btn:hover .navbar-icon {
+  transform: translateY(-1px) scale(1.05);
+}
+
 /* Cart Drawer Backdrop */
 .cart-drawer-backdrop {
   position: fixed;
