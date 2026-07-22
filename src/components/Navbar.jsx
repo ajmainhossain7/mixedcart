@@ -16,7 +16,7 @@ const Navbar = () => {
             <div className="navbar-container-wrapper">
                 <Link to="/" className="navbar-logo">
                     <img src="https://i.ibb.co/0j1Z5kM/logo.png" alt="Logo" className="navbar-logo-image" />
-                    LIFESTYLE
+                    MixedCart
                 </Link>
 
                 <ul className="navbar-links">

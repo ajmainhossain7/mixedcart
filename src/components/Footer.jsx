@@ -8,7 +8,7 @@ const Footer = () => {
             <div className="container">
                 <div className="footer-grid">
                     <div className="footer-col">
-                        <Link to="/" className="footer-logo">LIFESTYLE</Link>
+                        <Link to="/" className="footer-logo">MixedCart</Link>
                         <p className="footer-desc">
                             Meticulously crafted essentials for the modern home and body. Curated with endurance and minimalism in mind.
                         </p>
@@ -63,7 +63,7 @@ const Footer = () => {
                 </div>
 
                 <div className="footer-bottom">
-                    <p>&copy; {new Date().getFullYear()} LIFESTYLE. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} MixedCart. All rights reserved.</p>
                     <div className="footer-bottom-links">
                         <Link to="/" className="footer-link">Privacy Policy</Link>
                         <Link to="/" className="footer-link">Terms of Service</Link>

@@ -210,7 +210,7 @@ const Home = () => {
             {theme === 'light' && (
                 <section className="section-padding">
                     <div className="container social-section">
-                        <h3 className="social-title">Follow the aesthetic @lifestyle</h3>
+                        <h3 className="social-title">Follow the aesthetic @MixedCart</h3>
                         <div className="social-grid">
                             <div className="social-item">
                                 <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=400" alt="Instagram 1" className="social-img" />

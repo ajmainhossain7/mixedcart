@@ -123,7 +123,7 @@ const Cart = () => {
                         </svg>
                     </div>
                     <h2 className="serif-heading empty-title">Your Bag is Empty</h2>
-                    <p className="empty-description">Curate your home and lifestyle with our premium minimalist collections.</p>
+                    <p className="empty-description">Curate your home and MixedCart with our premium minimalist collections.</p>
                     <Link to="/shop" className="btn-primary empty-shop-btn">
                         Shop Collection
                     </Link>

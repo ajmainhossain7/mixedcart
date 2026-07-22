@@ -66,7 +66,7 @@ const Register = () => {
             <div className="auth-image-side register-image-side">
                 <div className="auth-image-overlay"></div>
                 <div className="auth-image-text">
-                    <span className="auth-brand">LIFESTYLE</span>
+                    <span className="auth-brand">MixedCart</span>
                     <h2 className="serif-heading">Design is not just what it looks like and feels like. Design is how it works.</h2>
                 </div>
             </div>
@@ -74,7 +74,7 @@ const Register = () => {
             <div className="auth-form-side">
                 <div className="auth-form-container">
                     <h1 className="serif-heading auth-title">Create Account</h1>
-                    <p className="auth-subtitle">Join us to experience premium lifestyle collection</p>
+                    <p className="auth-subtitle">Join us to experience premium MixedCart collection</p>
 
                     {error && <div className="auth-error-banner">{error}</div>}
                     {successMsg && <div className="auth-success-banner">{successMsg}</div>}

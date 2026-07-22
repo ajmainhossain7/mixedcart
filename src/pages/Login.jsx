@@ -61,7 +61,7 @@ const Login = () => {
             <div className="auth-image-side">
                 <div className="auth-image-overlay"></div>
                 <div className="auth-image-text">
-                    <span className="auth-brand">LIFESTYLE</span>
+                    <span className="auth-brand">MixedCart</span>
                     <h2 className="serif-heading">Simplicity is the ultimate sophistication.</h2>
                 </div>
             </div>

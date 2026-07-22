@@ -246,7 +246,7 @@ const ChatWidget = () => {
                         ) : (
                             <div className="chat-header-details">
                                 <span className="chat-header-name" style={{ fontSize: '15px', fontFamily: 'var(--font-serif)', letterSpacing: '0.05em' }}>MixedCart Chat</span>
-                                <span className="chat-header-status" style={{ fontSize: '10px' }}>Talk with lifestyle curators</span>
+                                <span className="chat-header-status" style={{ fontSize: '10px' }}>Talk with MixedCart curators</span>
                             </div>
                         )}
                     </div>
