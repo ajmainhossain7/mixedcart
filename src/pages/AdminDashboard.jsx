@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import '../styles/dashboard.css';
+import { API_URL } from '../api';
 
 const AdminDashboard = () => {
     const { user } = useContext(AuthContext);
@@ -17,7 +18,7 @@ const AdminDashboard = () => {
         const fetchAdminData = async () => {
             try {
                 // Fetch stats
-                const statsRes = await fetch('http://localhost:5000/api/analytics', {
+                const statsRes = await fetch(`${API_URL}/api/analytics`, {
                     headers: { 'Authorization': `Bearer ${user.token}` }
                 });
                 if (statsRes.ok) {
@@ -26,7 +27,7 @@ const AdminDashboard = () => {
                 }
 
                 // Fetch company profiles
-                const companyRes = await fetch('http://localhost:5000/api/company/admin/profiles', {
+                const companyRes = await fetch(`${API_URL}/api/company/admin/profiles`, {
                     headers: { 'Authorization': `Bearer ${user.token}` }
                 });
                 if (companyRes.ok) {
@@ -35,7 +36,7 @@ const AdminDashboard = () => {
                 }
 
                 // Fetch orders
-                const ordersRes = await fetch('http://localhost:5000/api/orders', {
+                const ordersRes = await fetch(`${API_URL}/api/orders`, {
                     headers: { 'Authorization': `Bearer ${user.token}` }
                 });
                 if (ordersRes.ok) {
@@ -55,7 +56,7 @@ const AdminDashboard = () => {
     const handleVerifyCompany = async (profileId, verifyState) => {
         setMessage('');
         try {
-            const res = await fetch(`http://localhost:5000/api/company/admin/profiles/${profileId}/verify`, {
+            const res = await fetch(`${API_URL}/api/company/admin/profiles/${profileId}/verify`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -70,7 +71,7 @@ const AdminDashboard = () => {
                 setMessage(responseData.message || 'Verification status updated.');
                 
                 // Refresh stats
-                const statsRes = await fetch('http://localhost:5000/api/analytics', {
+                const statsRes = await fetch(`${API_URL}/api/analytics`, {
                     headers: { 'Authorization': `Bearer ${user.token}` }
                 });
                 if (statsRes.ok) {
@@ -88,7 +89,7 @@ const AdminDashboard = () => {
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         setMessage('');
         try {
-            const res = await fetch(`http://localhost:5000/api/orders/${orderId}/status`, {
+            const res = await fetch(`${API_URL}/api/orders/${orderId}/status`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

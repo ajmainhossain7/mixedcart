@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import { io } from 'socket.io-client';
 import { AuthContext } from '../context/AuthContext';
 import '../styles/chat.css';
-
-const SOCKET_URL = 'http://localhost:5000';
+import { API_URL, SOCKET_URL } from '../api';
 
 const ChatWidget = () => {
     const { user } = useContext(AuthContext);
@@ -92,7 +91,7 @@ const ChatWidget = () => {
 
             try {
                 // Initialize/Fetch conversation
-                const res = await fetch(`${SOCKET_URL}/api/chat/conversation`, {
+                const res = await fetch(`${API_URL}/api/chat/conversation`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -130,7 +129,7 @@ const ChatWidget = () => {
     const fetchConversations = async () => {
         if (!user) return;
         try {
-            const res = await fetch(`${SOCKET_URL}/api/chat/conversations`, {
+            const res = await fetch(`${API_URL}/api/chat/conversations`, {
                 headers: { 'Authorization': `Bearer ${user.token}` }
             });
             if (res.ok) {
@@ -147,7 +146,7 @@ const ChatWidget = () => {
     const fetchMessages = async (conversationId) => {
         if (!user) return;
         try {
-            const res = await fetch(`${SOCKET_URL}/api/chat/messages/${conversationId}`, {
+            const res = await fetch(`${API_URL}/api/chat/messages/${conversationId}`, {
                 headers: { 'Authorization': `Bearer ${user.token}` }
             });
             if (res.ok) {

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import ProductCard from '../components/ProductCard';
 import '../styles/profile.css';
+import { API_URL } from '../api';
 
 const Profile = () => {
     const { user, logout, wishlist } = useContext(AuthContext);
@@ -25,7 +26,7 @@ const Profile = () => {
 
         const fetchOrders = async () => {
             try {
-                const res = await fetch('http://localhost:5000/api/orders/myorders', {
+                const res = await fetch(`${API_URL}/api/orders/myorders`, {
                     headers: {
                         'Authorization': `Bearer ${user.token}`
                     }
@@ -53,7 +54,7 @@ const Profile = () => {
         const fetchWishlist = async () => {
             setWishlistLoading(true);
             try {
-                const res = await fetch('http://localhost:5000/api/auth/wishlist', {
+                const res = await fetch(`${API_URL}/api/auth/wishlist`, {
                     headers: {
                         'Authorization': `Bearer ${user.token}`
                     }

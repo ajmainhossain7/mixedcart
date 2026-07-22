@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ThemeContext } from '../context/ThemeContext';
 import ProductCard from '../components/ProductCard';
 import '../styles/home.css';
+import { API_URL } from '../api';
 
 const Home = () => {
     const { theme } = useContext(ThemeContext);
@@ -11,7 +12,7 @@ const Home = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const res = await fetch('http://localhost:5000/api/products');
+                const res = await fetch(`${API_URL}/api/products`);
                 if (res.ok) {
                     const data = await res.json();
                     setProducts(data);

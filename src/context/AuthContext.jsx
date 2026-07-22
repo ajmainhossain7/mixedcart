@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { API_URL } from '../api';
 
 export const AuthContext = createContext();
 
@@ -8,7 +9,7 @@ export const AuthProvider = ({ children }) => {
 
     const fetchWishlist = async (token) => {
         try {
-            const res = await fetch('http://localhost:5000/api/auth/wishlist', {
+            const res = await fetch(`${API_URL}/api/auth/wishlist`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -37,7 +38,7 @@ export const AuthProvider = ({ children }) => {
     const toggleWishlist = async (productId) => {
         if (!user) return;
         try {
-            const res = await fetch('http://localhost:5000/api/auth/wishlist', {
+            const res = await fetch(`${API_URL}/api/auth/wishlist`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

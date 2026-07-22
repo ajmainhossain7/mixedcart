@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 import '../styles/productDetails.css';
+import { API_URL } from '../api';
 
 // Mock catalog for lookup if DB does not have it
 const mockProducts = [
@@ -36,7 +37,7 @@ const ProductDetails = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/products/${id}`);
+                const res = await fetch(`${API_URL}/api/products/${id}`);
                 if (res.ok) {
                     const data = await res.json();
                     setProduct(data);
@@ -74,7 +75,7 @@ const ProductDetails = () => {
         setReviewSuccess('');
 
         try {
-            const res = await fetch(`http://localhost:5000/api/products/${id}/reviews`, {
+            const res = await fetch(`${API_URL}/api/products/${id}/reviews`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

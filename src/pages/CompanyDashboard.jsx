@@ -3,6 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import { io } from 'socket.io-client';
 import '../styles/dashboard.css';
 import '../styles/chat.css';
+import { API_URL, SOCKET_URL } from '../api';
 
 const SellerChat = ({ user }) => {
     const [conversations, setConversations] = useState([]);
@@ -14,7 +15,7 @@ const SellerChat = ({ user }) => {
 
     useEffect(() => {
         if (!user) return;
-        socketRef.current = io('http://localhost:5000');
+        socketRef.current = io(SOCKET_URL);
 
         socketRef.current.on('connect', () => {
             console.log('Seller chat socket connected');
@@ -62,7 +63,7 @@ const SellerChat = ({ user }) => {
 
     const fetchConversations = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/chat/conversations', {
+            const res = await fetch(`${API_URL}/api/chat/conversations`, {
                 headers: { 'Authorization': `Bearer ${user.token}` }
             });
             if (res.ok) {
@@ -76,7 +77,7 @@ const SellerChat = ({ user }) => {
 
     const fetchMessages = async (convId) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/chat/messages/${convId}`, {
+            const res = await fetch(`${API_URL}/api/chat/messages/${convId}`, {
                 headers: { 'Authorization': `Bearer ${user.token}` }
             });
             if (res.ok) {
@@ -240,7 +241,7 @@ const CompanyDashboard = () => {
         const fetchSellerOrders = async () => {
             setOrdersLoading(true);
             try {
-                const res = await fetch('http://localhost:5000/api/orders/seller', {
+                const res = await fetch(`${API_URL}/api/orders/seller`, {
                     headers: { 'Authorization': `Bearer ${user.token}` }
                 });
                 if (res.ok) {
@@ -260,7 +261,7 @@ const CompanyDashboard = () => {
     const handleUpdateItemStatus = async (orderId, productId, newStatus) => {
         setMessage('');
         try {
-            const res = await fetch(`http://localhost:5000/api/orders/seller/${orderId}/item/${productId}/status`, {
+            const res = await fetch(`${API_URL}/api/orders/seller/${orderId}/item/${productId}/status`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -297,7 +298,7 @@ const CompanyDashboard = () => {
         const fetchCompanyData = async () => {
             try {
                 // Fetch profile
-                const profileRes = await fetch('http://localhost:5000/api/company/profile', {
+                const profileRes = await fetch(`${API_URL}/api/company/profile`, {
                     headers: {
                         'Authorization': `Bearer ${user.token}`
                     }
@@ -315,7 +316,7 @@ const CompanyDashboard = () => {
                 }
 
                 // Fetch products
-                const productsRes = await fetch('http://localhost:5000/api/company/products', {
+                const productsRes = await fetch(`${API_URL}/api/company/products`, {
                     headers: {
                         'Authorization': `Bearer ${user.token}`
                     }
@@ -326,7 +327,7 @@ const CompanyDashboard = () => {
                 }
 
                 // Fetch seller analytics
-                const analyticsRes = await fetch('http://localhost:5000/api/analytics/seller', {
+                const analyticsRes = await fetch(`${API_URL}/api/analytics/seller`, {
                     headers: {
                         'Authorization': `Bearer ${user.token}`
                     }
@@ -358,7 +359,7 @@ const CompanyDashboard = () => {
             if (logoFile) formData.append('logo', logoFile);
             if (bannerFile) formData.append('banner', bannerFile);
 
-            const res = await fetch('http://localhost:5000/api/company/profile', {
+            const res = await fetch(`${API_URL}/api/company/profile`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${user.token}`
@@ -396,7 +397,7 @@ const CompanyDashboard = () => {
             formData.append('stock', productData.stock);
             formData.append('image', productImage);
 
-            const res = await fetch('http://localhost:5000/api/products', {
+            const res = await fetch(`${API_URL}/api/products`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${user.token}`

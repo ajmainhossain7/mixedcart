@@ -5,6 +5,7 @@ import { CartContext } from '../context/CartContext';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import '../styles/dashboard.css';
+import { API_URL } from '../api';
 
 // Initialize stripe with Stripe elements promise
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || 'pk_test_51OpG5qSFSsQ8lA7fN7t62N147G0k6r7Z8X3J9E');
@@ -36,7 +37,7 @@ const CheckoutForm = ({ amount, cartItems, onOrderSuccess }) => {
 
         try {
             // Step 1: Request PaymentIntent clientSecret from Backend
-            const intentRes = await fetch('http://localhost:5000/api/payment/order', {
+            const intentRes = await fetch(`${API_URL}/api/payment/order`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -74,7 +75,7 @@ const CheckoutForm = ({ amount, cartItems, onOrderSuccess }) => {
 
             // Step 3: Create Order on Backend
             if (paymentResult.paymentIntent.status === 'succeeded') {
-                const orderRes = await fetch('http://localhost:5000/api/orders', {
+                const orderRes = await fetch(`${API_URL}/api/orders`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import ProductCard from '../components/ProductCard';
 import { CartContext } from '../context/CartContext';
 import '../styles/shop.css';
+import { API_URL } from '../api';
 
 // Combine mock products for rich fallback
 const mockProducts = [
@@ -38,7 +39,7 @@ const Shop = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const res = await fetch('http://localhost:5000/api/products');
+                const res = await fetch(`${API_URL}/api/products`);
                 if (res.ok) {
                     const data = await res.json();
                     // Make sure it is an array and not empty

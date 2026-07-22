@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import '../styles/register.css';
+import { API_URL } from '../api';
 
 const Register = () => {
     const { login } = useContext(AuthContext);
@@ -31,7 +32,7 @@ const Register = () => {
         setLoading(true);
 
         try {
-            const res = await fetch('http://localhost:5000/api/auth/register', {
+            const res = await fetch(`${API_URL}/api/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
